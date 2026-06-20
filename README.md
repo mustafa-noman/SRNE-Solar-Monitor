@@ -14,6 +14,16 @@ The application displays live:
 The default connection uses the SRNE cloud MQTT telemetry feed. A direct
 Modbus RTU-over-TCP mode is also available for compatible Wi-Fi/serial bridges.
 
+## Screenshots
+
+### Full dashboard
+
+![SRNE Solar Monitor full dashboard](docs/screenshots/dashboard.png)
+
+### Desktop widget
+
+![SRNE Solar Monitor desktop widget](docs/screenshots/widget.png)
+
 ## Requirements
 
 ### To build the project
