@@ -1,0 +1,376 @@
+<Window x:Class="SolarPowerMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="SRNE Solar Monitor"
+        Width="1180"
+        Height="760"
+        MinWidth="980"
+        MinHeight="650"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBackground}">
+    <Window.Resources>
+        <DropShadowEffect x:Key="CardShadow"
+                          Color="#020914"
+                          BlurRadius="28"
+                          ShadowDepth="8"
+                          Opacity="0.38"/>
+        <LinearGradientBrush x:Key="HeroGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#15283C" Offset="0"/>
+            <GradientStop Color="#102134" Offset="0.56"/>
+            <GradientStop Color="#18273A" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SolarGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FFCC70" Offset="0"/>
+            <GradientStop Color="#FF9D35" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Resources>
+
+    <Grid>
+        <Ellipse Width="520" Height="520"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Top"
+                 Margin="0,-270,-190,0"
+                 Fill="#102F4A"
+                 Opacity="0.32"/>
+        <Ellipse Width="360" Height="360"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Bottom"
+                 Margin="-210,0,0,-230"
+                 Fill="#3B2611"
+                 Opacity="0.28"/>
+
+        <Grid Margin="34,28,34,32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="50" Height="50"
+                            CornerRadius="15"
+                            Background="{StaticResource SolarGradient}">
+                        <Grid>
+                            <TextBlock Text="☀"
+                                       FontFamily="Segoe UI Symbol"
+                                       FontSize="27"
+                                       Foreground="#172131"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                    <StackPanel Margin="15,1,0,0">
+                        <TextBlock Text="Solar Power Monitor"
+                                   FontSize="26"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="SRNE Shiner2440  •  Live energy dashboard"
+                                   Foreground="{StaticResource SecondaryText}"
+                                   FontSize="13"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#102A25"
+                            BorderBrush="#1B5948"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="13,9"
+                            Margin="0,0,12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot"
+                                     Width="9" Height="9"
+                                     Fill="#35D49A"
+                                     Margin="0,0,8,0"
+                                     VerticalAlignment="Center"/>
+                            <TextBlock x:Name="StatusText"
+                                       Text="CONNECTING"
+                                       Foreground="#68E4B8"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Style="{StaticResource IconButton}"
+                            ToolTip="Reconnect"
+                            Click="Reconnect_Click"
+                            Content="↻"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.45*"/>
+                    <ColumnDefinition Width="22"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.2*"/>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="0.8*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Style="{StaticResource CardBorder}"
+                            Background="{StaticResource HeroGradient}"
+                            Effect="{StaticResource CardShadow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="300"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="SOLAR GENERATION"
+                                           Foreground="{StaticResource SolarAccent}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock x:Name="SolarPowerText"
+                                               Text="--"
+                                               FontSize="74"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="W"
+                                               Foreground="{StaticResource SecondaryText}"
+                                               FontSize="27"
+                                               Margin="10,35,0,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="SolarModeText"
+                                           Text="Waiting for live telemetry"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="14"
+                                           Margin="2,0,0,0"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,28,0,0">
+                                    <StackPanel Width="135">
+                                        <TextBlock Text="PV VOLTAGE" Style="{StaticResource MetricLabel}"/>
+                                        <TextBlock x:Name="PvVoltageText" Text="-- V"
+                                                   Style="{StaticResource MetricValue}"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    <Border Width="1" Background="#294057" Margin="0,2,24,2"/>
+                                    <StackPanel>
+                                        <TextBlock Text="PV CURRENT" Style="{StaticResource MetricLabel}"/>
+                                        <TextBlock x:Name="PvCurrentText" Text="-- A"
+                                                   Style="{StaticResource MetricValue}"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Grid Grid.Column="1"
+                                  Width="252"
+                                  Height="252"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center">
+                                <Ellipse Stroke="#20364C" StrokeThickness="20"/>
+                                <Ellipse Stroke="{StaticResource SolarGradient}"
+                                         StrokeThickness="20"
+                                         StrokeDashArray="5.6,2.4"
+                                         StrokeStartLineCap="Round"
+                                         StrokeEndLineCap="Round"
+                                         RenderTransformOrigin="0.5,0.5">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="-90"/>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Ellipse Width="176" Height="176" Fill="#0D1928" Opacity="0.88"/>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="☀"
+                                               FontFamily="Segoe UI Symbol"
+                                               Foreground="{StaticResource SolarAccent}"
+                                               FontSize="34"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="LIVE"
+                                               Foreground="{StaticResource SecondaryText}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2"
+                            Style="{StaticResource CardBorder}"
+                            Effect="{StaticResource CardShadow}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <TextBlock Text="Recent solar output"
+                                           FontSize="17"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock x:Name="ChartRangeText"
+                                           Text="Waiting for samples"
+                                           HorizontalAlignment="Right"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="12"/>
+                            </Grid>
+                            <Grid Grid.Row="1" Margin="0,18,0,0">
+                                <Canvas x:Name="ChartCanvas"
+                                        Height="130"
+                                        ClipToBounds="True"
+                                        SizeChanged="ChartCanvas_SizeChanged">
+                                    <Line X1="0" Y1="32" X2="800" Y2="32" Stroke="#1D3248" StrokeThickness="1"/>
+                                    <Line X1="0" Y1="65" X2="800" Y2="65" Stroke="#1D3248" StrokeThickness="1"/>
+                                    <Line X1="0" Y1="98" X2="800" Y2="98" Stroke="#1D3248" StrokeThickness="1"/>
+                                    <Polyline x:Name="PowerChartLine"
+                                              Stroke="{StaticResource SolarAccent}"
+                                              StrokeThickness="3"
+                                              StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="0.72*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Style="{StaticResource CardBorder}"
+                            Effect="{StaticResource CardShadow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="124"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="BATTERY"
+                                           Foreground="{StaticResource BatteryAccent}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,9,0,0">
+                                    <TextBlock x:Name="BatterySocText"
+                                               Text="--"
+                                               FontSize="48"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="%"
+                                               Foreground="{StaticResource SecondaryText}"
+                                               FontSize="21"
+                                               Margin="7,20,0,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="BatteryStateText"
+                                           Text="Waiting for battery"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Grid Grid.Column="1" Width="112" Height="112">
+                                <Ellipse Stroke="#20364C" StrokeThickness="10"/>
+                                <Ellipse x:Name="BatteryRing"
+                                         Stroke="{StaticResource BatteryAccent}"
+                                         StrokeThickness="10"
+                                         StrokeDashArray="0,100"
+                                         StrokeStartLineCap="Round"
+                                         RenderTransformOrigin="0.5,0.5">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="-90"/>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <TextBlock Text="⚡"
+                                           FontFamily="Segoe UI Symbol"
+                                           Foreground="{StaticResource BatteryAccent}"
+                                           FontSize="26"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2"
+                            Style="{StaticResource CardBorder}"
+                            Effect="{StaticResource CardShadow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="BATTERY VOLTAGE" Style="{StaticResource MetricLabel}"/>
+                                <TextBlock x:Name="BatteryVoltageText"
+                                           Text="-- V"
+                                           FontSize="34"
+                                           FontWeight="SemiBold"
+                                           Margin="0,8,0,0"/>
+                                <TextBlock Text="System voltage"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="12"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="#263A50" Margin="0,10"/>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="22,0,0,0">
+                                <TextBlock Text="CHARGE CURRENT" Style="{StaticResource MetricLabel}"/>
+                                <TextBlock x:Name="BatteryCurrentText"
+                                           Text="-- A"
+                                           FontSize="34"
+                                           FontWeight="SemiBold"
+                                           Margin="0,8,0,0"/>
+                                <TextBlock Text="Into battery"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="12"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="4"
+                            Style="{StaticResource CardBorder}"
+                            Effect="{StaticResource CardShadow}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="DEVICE" Style="{StaticResource MetricLabel}"/>
+                                <TextBlock Text="Shiner2440"
+                                           FontSize="19"
+                                           FontWeight="SemiBold"
+                                           Margin="0,4,0,0"/>
+                                <TextBlock Text="Wi-Fi ID  YOUR_DEVICE_ID"
+                                           Foreground="{StaticResource SecondaryText}"
+                                           FontSize="12"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Right">
+                                <TextBlock Text="LAST UPDATE"
+                                           Style="{StaticResource MetricLabel}"
+                                           HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="LastUpdateText"
+                                           Text="--:--:--"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Margin="0,5,0,0"
+                                           HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
