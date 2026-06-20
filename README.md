@@ -24,6 +24,17 @@ dotnet run
 
 Close the dashboard window to stop it.
 
+### Desktop widget
+
+Launch the compact always-on-top widget with:
+
+```powershell
+dotnet run -- --widget
+```
+
+The widget can be dragged anywhere on screen and includes a button to open
+the full dashboard.
+
 This project disables the generated native app-host executable so it can run
 on Windows systems that block unsigned executables. Use `dotnet run`, or run
 the built application with:

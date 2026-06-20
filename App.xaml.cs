@@ -13,6 +13,18 @@ public partial class App : Application
         }
 
         base.OnStartup(e);
-        new MainWindow(e.Args).Show();
+        var widgetMode = e.Args.Contains("--widget", StringComparer.OrdinalIgnoreCase);
+        var appArgs = e.Args
+            .Where(argument => !argument.Equals("--widget", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        if (widgetMode)
+        {
+            new WidgetWindow(appArgs).Show();
+        }
+        else
+        {
+            new MainWindow(appArgs).Show();
+        }
     }
 }
