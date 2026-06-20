@@ -1,102 +1,291 @@
-# SRNE Shiner2440 Solar Telemetry Monitor
+# Home Solar Monitor
 
-A dependency-free .NET 9 WPF desktop dashboard for an SRNE Shiner2440 MPPT
-controller. It displays live solar generation, battery state, charging
-current, and recent output history using the same SRNE MQTT telemetry feed as
-the official mobile app.
+A modern Windows desktop dashboard and always-on-top widget for monitoring an
+SRNE Shiner-series MPPT solar charge controller.
 
-## Protocol
+The application displays live:
 
-- Default source: SRNE cloud/MQTT
-- Default device ID: `YOUR_DEVICE_ID`
-- Device upload protocol: Modbus RTU frames carried in SRNE MQTT messages
-- Slave ID: `255`
-- Register block: `0x0100` through `0x0122`
+- Solar-panel power, voltage, and current
+- Battery state of charge, voltage, and charging current
+- Connection status and last update time
+- Recent solar-output history
+- A compact, draggable desktop widget
 
-The implementation validates the slave ID, function code, response length,
-Modbus exception responses, and CRC-16 on every response.
+The default connection uses the SRNE cloud MQTT telemetry feed. A direct
+Modbus RTU-over-TCP mode is also available for compatible Wi-Fi/serial bridges.
 
-## Run
+## Requirements
+
+### To build the project
+
+- Windows 10 or Windows 11
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- An SRNE-compatible Wi-Fi module and controller
+- Internet access when using SRNE cloud mode
+
+### To run a published copy
+
+- Windows 10 or Windows 11
+- [.NET 9 Desktop Runtime, Windows x64](https://dotnet.microsoft.com/download/dotnet/9.0)
+
+## Get the source
+
+```powershell
+git clone https://github.com/mustafa-noman/Home-Solar-Monitor.git
+cd Home-Solar-Monitor
+```
+
+## Configure your device
+
+Find the eight-character Wi-Fi device ID in the SRNE mobile app under:
+
+```text
+Device → Basic Info → Device ID
+```
+
+Run the full dashboard with your device ID:
+
+```powershell
+dotnet run -- --device-id YOUR_DEVICE_ID
+```
+
+Example:
+
+```powershell
+dotnet run -- --device-id A1B2C3D4
+```
+
+The device ID must contain exactly eight hexadecimal characters.
+
+You can also set it permanently for your Windows account:
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+    "SOLAR_DEVICE_ID",
+    "YOUR_DEVICE_ID",
+    "User"
+)
+```
+
+Sign out and back in after setting the environment variable.
+
+## Run the application
+
+Full dashboard:
 
 ```powershell
 dotnet run
 ```
 
-Close the dashboard window to stop it.
-
-### Desktop widget
-
-Launch the compact always-on-top widget with:
+Compact always-on-top widget:
 
 ```powershell
 dotnet run -- --widget
 ```
 
-The widget can be dragged anywhere on screen and includes a button to open
+The widget can be dragged around the screen. Select the arrow button to open
 the full dashboard.
 
-This project disables the generated native app-host executable so it can run
-on Windows systems that block unsigned executables. Use `dotnet run`, or run
-the built application with:
+## Publish for another Windows PC
+
+From the project folder, create a framework-dependent Windows deployment:
 
 ```powershell
-dotnet .\bin\Debug\net9.0\SolarPowerMonitor.dll
+dotnet publish -c Release --no-self-contained `
+  -p:UseAppHost=false `
+  -o ".\SolarMonitor-Publish"
 ```
 
-To publish a standalone Windows executable:
+Copy the complete `SolarMonitor-Publish` folder to the destination PC. Do not
+copy only `SolarPowerMonitor.dll`.
+
+For example, copy it to:
+
+```text
+E:\App\SolarMonitor-Publish
+```
+
+Install the .NET 9 Desktop Runtime x64 on the destination PC before launching
+the application.
+
+## Create a full-dashboard desktop shortcut
+
+Open PowerShell on the destination PC and run:
 
 ```powershell
-dotnet publish -c Release -r win-x64 --self-contained true `
-  -p:PublishSingleFile=true -p:UseAppHost=true
+$folder = "E:\App\SolarMonitor-Publish"
+$desktop = [Environment]::GetFolderPath("Desktop")
+$shell = New-Object -ComObject WScript.Shell
+$link = $shell.CreateShortcut("$desktop\Solar Power Monitor.lnk")
+
+$link.TargetPath = "C:\Program Files\dotnet\dotnet.exe"
+$link.Arguments = "`"$folder\SolarPowerMonitor.dll`""
+$link.WorkingDirectory = $folder
+$link.Save()
 ```
 
-The executable will be under
-`bin\Release\net9.0\win-x64\publish\SolarPowerMonitor.exe`.
-That executable must be code-signed or explicitly allowed by your
-organization's Application Control policy before it can run on a restricted
-PC.
+## Create a widget without a console window
 
-## Configuration
+Launching a managed DLL directly through `dotnet.exe` may display a blank
+console window. The following hidden launcher prevents that.
 
-Defaults match the connected controller:
+Create `StartWidget.vbs`:
 
 ```powershell
-dotnet run -- --source cloud --device-id YOUR_DEVICE_ID
+$folder = "E:\App\SolarMonitor-Publish"
+$launcher = "$folder\StartWidget.vbs"
+
+@'
+Set shell = CreateObject("WScript.Shell")
+shell.Run """C:\Program Files\dotnet\dotnet.exe"" ""E:\App\SolarMonitor-Publish\SolarPowerMonitor.dll"" --widget", 0, False
+'@ | Set-Content -LiteralPath $launcher
 ```
 
-Available options:
-
-- `--source`
-- `--device-id`
-- `--host`
-- `--port`
-- `--slave`
-- `--poll-ms`
-- `--connect-timeout-ms`
-- `--response-timeout-ms`
-- `--reconnect-delay-ms`
-
-Equivalent environment variables begin with `SOLAR_`.
-
-The original transparent TCP mode remains available:
+Create desktop and automatic-startup shortcuts:
 
 ```powershell
-dotnet run -- --source direct --host 192.168.10.167 --port 8899 --slave 255
+$folder = "E:\App\SolarMonitor-Publish"
+$launcher = "$folder\StartWidget.vbs"
+$desktop = [Environment]::GetFolderPath("Desktop")
+$startup = [Environment]::GetFolderPath("Startup")
+$shell = New-Object -ComObject WScript.Shell
+
+foreach ($path in @(
+    "$desktop\Solar Power Widget.lnk",
+    "$startup\Solar Power Widget.lnk"
+)) {
+    $link = $shell.CreateShortcut($path)
+    $link.TargetPath = "C:\Windows\System32\wscript.exe"
+    $link.Arguments = "`"$launcher`""
+    $link.WorkingDirectory = $folder
+    $link.Save()
+}
 ```
 
-## Offline protocol verification
+The widget will start automatically the next time the user signs into
+Windows.
+
+To disable automatic startup, press `Win + R`, enter `shell:startup`, and
+delete the `Solar Power Widget` shortcut.
+
+## Smart App Control
+
+Windows Smart App Control may block an unsigned
+`SolarPowerMonitor.exe`. This repository therefore disables the generated
+native app host and launches the managed DLL through Microsoft's signed
+`dotnet.exe`.
+
+Recommended command:
+
+```powershell
+dotnet SolarPowerMonitor.dll
+```
+
+Do not disable Windows security features just to run this application. A
+publicly distributed native executable should be signed with a trusted
+code-signing certificate.
+
+## Direct connection mode
+
+For a transparent Modbus TCP/serial bridge:
+
+```powershell
+dotnet run -- `
+  --source direct `
+  --host 192.168.10.167 `
+  --port 8899 `
+  --slave 255
+```
+
+The bridge must use serial settings compatible with the controller. The
+application sends complete Modbus RTU request frames and expects complete RTU
+response frames.
+
+## Command-line options
+
+| Option | Purpose | Default |
+| --- | --- | --- |
+| `--widget` | Open the compact desktop widget | Disabled |
+| `--source` | Select `cloud` or `direct` mode | `cloud` |
+| `--device-id` | Eight-character SRNE Wi-Fi device ID | Project default |
+| `--host` | Direct bridge IP address or hostname | `192.168.10.167` |
+| `--port` | Direct bridge TCP port | `8899` |
+| `--slave` | Modbus slave address | `255` |
+| `--poll-ms` | Direct-mode polling interval | `2000` |
+| `--connect-timeout-ms` | Connection timeout | `5000` |
+| `--response-timeout-ms` | Telemetry timeout | `15000` |
+| `--reconnect-delay-ms` | Delay before reconnecting | `2000` |
+| `--self-test` | Run protocol tests and exit | Disabled |
+
+Equivalent environment variables use the `SOLAR_` prefix, including:
+
+- `SOLAR_DEVICE_ID`
+- `SOLAR_SOURCE`
+- `SOLAR_HOST`
+- `SOLAR_PORT`
+- `SOLAR_SLAVE_ID`
+
+## Protocol verification
+
+Run the offline protocol tests:
 
 ```powershell
 dotnet run -- --self-test
 ```
 
-This checks the exact request bytes and CRC, register parsing and scale
-factors, and rejection of corrupted responses without requiring the physical
-controller.
+The tests verify:
 
-## Bridge setup notes
+- Modbus request bytes and CRC-16
+- Register parsing and scale factors
+- Rejection of corrupted responses
 
-The HF-LPB170 must be configured as a transparent TCP server (or compatible
-socket endpoint) using the same serial settings as the controller. Modbus RTU
-timing and serial parameters are handled by the bridge; this application sends
-complete RTU request frames and expects complete RTU response frames.
+No physical controller is required for these tests.
+
+## Security and privacy
+
+- No SRNE MQTT username or password is stored in this repository.
+- MQTT connection details are requested from the SRNE service at runtime.
+- Do not commit account passwords, tokens, private certificates, or diagnostic
+  output containing credentials.
+- A device ID identifies hardware and should be replaced with your own when
+  deploying the application.
+
+## Troubleshooting
+
+### The shortcut does nothing
+
+Confirm that this file exists:
+
+```text
+C:\Program Files\dotnet\dotnet.exe
+```
+
+If it does not, install the .NET 9 Desktop Runtime x64.
+
+### The application stays on CONNECTING
+
+- Confirm that the computer has internet access.
+- Confirm that the device is online in the SRNE mobile app.
+- Check that the configured device ID is correct.
+- Allow outbound HTTP and MQTT connections through the firewall.
+
+### Smart App Control blocks the executable
+
+Use the DLL shortcut described above instead of launching an unsigned `.exe`.
+
+### The widget opens with a blank console
+
+Use the `StartWidget.vbs` hidden launcher and `wscript.exe` shortcut described
+above.
+
+## Contributing
+
+Issues and pull requests are welcome. Before submitting a change:
+
+```powershell
+dotnet build -c Release
+dotnet run -c Release --no-build -- --self-test
+```
+
+Please avoid including real credentials or private device information in bug
+reports.
