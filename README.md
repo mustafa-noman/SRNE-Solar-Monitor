@@ -1,4 +1,4 @@
-# Home Solar Monitor
+# SRNE Solar Monitor
 
 A modern Windows desktop dashboard and always-on-top widget for monitoring an
 SRNE Shiner-series MPPT solar charge controller.
@@ -31,8 +31,8 @@ Modbus RTU-over-TCP mode is also available for compatible Wi-Fi/serial bridges.
 ## Get the source
 
 ```powershell
-git clone https://github.com/mustafa-noman/Home-Solar-Monitor.git
-cd Home-Solar-Monitor
+git clone https://github.com/mustafa-noman/SRNE-Solar-Monitor.git
+cd SRNE-Solar-Monitor
 ```
 
 ## Configure your device
