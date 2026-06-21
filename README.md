@@ -260,6 +260,14 @@ No physical controller is required for these tests.
 - A device ID identifies hardware and should be replaced with your own when
   deploying the application.
 
+## AI use
+
+This project was developed with assistance from
+[OpenAI Codex](https://openai.com/codex/). Codex was used for implementation,
+debugging, UI development, protocol testing, and documentation. Project
+direction, device configuration, testing decisions, and repository ownership
+remain with Mustafa Noman.
+
 ## Troubleshooting
 
 ### The shortcut does nothing
