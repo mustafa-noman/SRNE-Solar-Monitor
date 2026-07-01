@@ -349,7 +349,7 @@
                                            FontSize="19"
                                            FontWeight="SemiBold"
                                            Margin="0,4,0,0"/>
-                                <TextBlock Text="Wi-Fi ID  YOUR_DEVICE_ID"
+                                <TextBlock Text="Wi-Fi ID configured externally"
                                            Foreground="{StaticResource SecondaryText}"
                                            FontSize="12"
                                            Margin="0,5,0,0"/>

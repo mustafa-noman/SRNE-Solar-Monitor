@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SolarPowerMonitor.Mobile.HistoryPage"
+             Title="History">
+    <Grid Padding="20,16" RowDefinitions="Auto,*" RowSpacing="16">
+        <VerticalStackLayout>
+            <Label Text="Recent telemetry" FontSize="28" FontFamily="OpenSansSemibold" />
+            <Label Text="Latest 500 persisted readings" TextColor="{StaticResource SecondaryText}" />
+        </VerticalStackLayout>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding History}" EmptyView="No readings yet.">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="22">
+                            <Label Text="{Binding TimeText}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding SolarText}" TextColor="{StaticResource SolarAccent}" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="2" Text="{Binding BatteryText}" TextColor="{StaticResource BatteryAccent}" FontFamily="OpenSansSemibold" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
