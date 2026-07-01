@@ -1,6 +1,6 @@
 # Solar Monitor for Android
 
-.NET 10 MAUI dashboard for Android 15 and newer.
+.NET 10 MAUI dashboard for Android 13 and newer.
 
 ## Features
 
@@ -12,7 +12,7 @@
 
 ## Android support
 
-- Minimum: Android 15 / API 35
+- Minimum: Android 13 / API 33
 - Target: API 36 with the current .NET Android workload
 
 ## Build
