@@ -6,7 +6,7 @@
     <Grid Padding="20,16" RowDefinitions="Auto,*" RowSpacing="16">
         <VerticalStackLayout>
             <Label Text="Recent telemetry" FontSize="28" FontFamily="OpenSansSemibold" />
-            <Label Text="Latest 50 readings from this session" TextColor="{StaticResource SecondaryText}" />
+            <Label Text="Latest 500 persisted readings" TextColor="{StaticResource SecondaryText}" />
         </VerticalStackLayout>
         <CollectionView Grid.Row="1" ItemsSource="{Binding History}" EmptyView="No readings yet.">
             <CollectionView.ItemTemplate>
