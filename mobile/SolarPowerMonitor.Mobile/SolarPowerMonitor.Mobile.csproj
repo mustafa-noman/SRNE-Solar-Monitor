@@ -33,7 +33,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationVersion>3</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
@@ -60,6 +60,11 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\..\ModbusRtuTcpClient.cs" Link="Services\SharedModbusProtocol.cs" />
+		<Compile Include="..\..\SrneCloudClient.cs" Link="Services\SrneCloudProtocol.cs" />
 	</ItemGroup>
 
 </Project>

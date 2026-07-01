@@ -22,7 +22,7 @@ internal sealed record AppOptions(
         var values = ParseArguments(args);
 
         var source = ParseSource(Get(values, "source", "SOLAR_SOURCE", "cloud"));
-        var deviceId = Get(values, "device-id", "SOLAR_DEVICE_ID", "YOUR_DEVICE_ID")
+        var deviceId = Get(values, "device-id", "SOLAR_DEVICE_ID", "")
             .Trim()
             .ToUpperInvariant();
         var host = Get(values, "host", "SOLAR_HOST", "192.168.10.167");
@@ -80,7 +80,7 @@ internal sealed record AppOptions(
             Usage: dotnet run -- [options]
 
               --source <cloud|direct>        Data source (default cloud)
-              --device-id <value>            SRNE Wi-Fi device ID (default YOUR_DEVICE_ID)
+              --device-id <value>            SRNE Wi-Fi device ID (or SOLAR_DEVICE_ID)
               --host <value>                 Bridge IP/host (default 192.168.10.167)
               --port <value>                 Bridge TCP port (default 8899)
               --slave <value>                Direct-mode Modbus slave ID (default 255)

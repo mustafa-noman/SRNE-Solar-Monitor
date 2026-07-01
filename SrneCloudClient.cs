@@ -9,6 +9,7 @@ namespace SolarPowerMonitor;
 
 internal sealed class SrneCloudClient : IAsyncDisposable
 {
+    private const ushort RegisterCount = 35;
     private const string DeviceLookupUrl =
         "http://www.srne.net:9006/api/mqtt/getclients/?clientid=WIFI-";
 
@@ -101,7 +102,7 @@ internal sealed class SrneCloudClient : IAsyncDisposable
                     return ModbusRtuTcpClient.ParseReadHoldingRegistersResponse(
                         frame,
                         255,
-                        AppOptions.RegisterCount);
+                        RegisterCount);
                 }
             }
             else if (packetType == 0xD0)

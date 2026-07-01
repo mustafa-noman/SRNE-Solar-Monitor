@@ -10,10 +10,11 @@ namespace SolarPowerMonitor.Mobile;
 public sealed class DashboardViewModel : INotifyPropertyChanged
 {
     public static DashboardViewModel Current { get; } = new();
+    private readonly CloudSolarConnection cloudConnection = new();
     private CancellationTokenSource? cancellation;
-    private SolarTelemetry telemetry = new(100, 36.4m, 1.01m, 37, 14.0m, 2.57m);
-    private string statusText = "Demo";
-    private string statusColor = "#FFAF3F";
+    private SolarTelemetry telemetry = new(0, 0, 0, 0, 0, 0);
+    private string statusText = "Connecting";
+    private string statusColor = "#91A4BF";
     private string errorMessage = "";
     private DateTime lastUpdate = DateTime.Now;
 
@@ -23,36 +24,47 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     public ICommand RefreshCommand { get; }
     public ushort SolarPower => telemetry.PvChargingPower;
     public ushort BatteryPercent => telemetry.BatteryStateOfCharge;
+    public string SolarStatusText => telemetry.PvChargingPower > 0 ? "Solar array is charging the battery" : "No solar charging detected";
+    public string BatteryStatusText => telemetry.BatteryChargingCurrent > 0 ? "Charging normally" : "Not charging";
     public string PvVoltageText => $"{telemetry.PvArrayVoltage:F1} V";
     public string PvCurrentText => $"{telemetry.PvArrayCurrent:F2} A";
     public string BatteryVoltageText => $"{telemetry.BatteryVoltage:F1} V";
     public string ChargeCurrentText => $"{telemetry.BatteryChargingCurrent:F2} A";
     public string DeviceName => MonitorSettings.DeviceName;
-    public string DataSourceText => MonitorSettings.DemoMode ? "Demo data" : "Direct LAN Modbus";
+    public string DataSourceText => MonitorSettings.Mode switch
+    {
+        MonitorMode.Cloud => "SRNE cloud telemetry",
+        MonitorMode.Direct => "Direct LAN Modbus",
+        _ => "Demo data"
+    };
     public string LastUpdateText => lastUpdate.ToString("HH:mm:ss");
     public string StatusText { get => statusText; private set => Set(ref statusText, value); }
     public string StatusColor { get => statusColor; private set => Set(ref statusColor, value); }
     public string ErrorMessage { get => errorMessage; private set { Set(ref errorMessage, value); OnPropertyChanged(nameof(HasError)); } }
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    public Task StartAsync()
+    public async Task StartAsync()
     {
-        if (cancellation is not null) return Task.CompletedTask;
+        if (cancellation is not null) return;
+        await MonitorSettings.InitializeAsync();
+        var storedHistory = await SolarDatabase.GetHistoryAsync();
+        History.Clear();
+        foreach (var item in storedHistory)
+            History.Add(item);
         cancellation = new CancellationTokenSource();
         _ = PollAsync(cancellation.Token);
-        return Task.CompletedTask;
     }
 
     public void Stop()
     {
         cancellation?.Cancel();
-        cancellation?.Dispose();
         cancellation = null;
     }
 
     public async Task RestartAsync()
     {
         Stop();
+        await cloudConnection.ResetAsync();
         OnPropertyChanged(nameof(DeviceName));
         OnPropertyChanged(nameof(DataSourceText));
         await StartAsync();
@@ -62,27 +74,35 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     {
         while (!token.IsCancellationRequested)
         {
-            await RefreshAsync(token);
-            try { await Task.Delay(TimeSpan.FromSeconds(3), token); }
+            var succeeded = await RefreshAsync(token);
+            var delay = succeeded && MonitorSettings.Mode == MonitorMode.Cloud
+                ? TimeSpan.Zero
+                : TimeSpan.FromSeconds(2);
+            try
+            {
+                if (delay > TimeSpan.Zero)
+                    await Task.Delay(delay, token);
+            }
             catch (OperationCanceledException) { break; }
         }
     }
 
-    private Task RefreshAsync() => RefreshAsync(cancellation?.Token ?? CancellationToken.None);
+    private async Task RefreshAsync() =>
+        _ = await RefreshAsync(cancellation?.Token ?? CancellationToken.None);
 
-    private async Task RefreshAsync(CancellationToken token)
+    private async Task<bool> RefreshAsync(CancellationToken token)
     {
         try
         {
             SolarTelemetry next;
-            if (MonitorSettings.DemoMode)
+            if (MonitorSettings.Mode == MonitorMode.Demo)
             {
                 var watts = (ushort)Random.Shared.Next(35, 42);
                 next = telemetry with { PvChargingPower = watts, PvArrayCurrent = watts / Math.Max(telemetry.PvArrayVoltage, 1) };
                 StatusText = "Demo";
                 StatusColor = "#FFAF3F";
             }
-            else
+            else if (MonitorSettings.Mode == MonitorMode.Direct)
             {
                 if (string.IsNullOrWhiteSpace(MonitorSettings.Host))
                     throw new InvalidOperationException("Set controller host in Settings.");
@@ -90,26 +110,48 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
                 StatusText = "Online";
                 StatusColor = "#38D39F";
             }
+            else
+            {
+                var deviceId = await MonitorSettings.GetDeviceIdAsync();
+                if (deviceId.Length != 8 || !deviceId.All(Uri.IsHexDigit))
+                    throw new InvalidOperationException("Enter your eight-character SRNE device ID in Settings.");
+                if (StatusText != "Online")
+                {
+                    StatusText = "Connecting";
+                    StatusColor = "#91A4BF";
+                }
+                next = await cloudConnection.ReadAsync(deviceId, token);
+                StatusText = "Online";
+                StatusColor = "#38D39F";
+            }
 
             telemetry = next;
-            lastUpdate = DateTime.Now;
+            var recordedAt = DateTimeOffset.Now;
+            lastUpdate = recordedAt.LocalDateTime;
+            await SolarDatabase.InsertTelemetryAsync(
+                next,
+                MonitorSettings.Mode.ToString(),
+                "foreground",
+                recordedAt);
             ErrorMessage = "";
             History.Insert(0, new HistoryPoint(lastUpdate, next.PvChargingPower, next.BatteryStateOfCharge));
-            while (History.Count > 50) History.RemoveAt(History.Count - 1);
+            while (History.Count > 500) History.RemoveAt(History.Count - 1);
             NotifyTelemetry();
+            return true;
         }
-        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { return false; }
         catch (Exception ex)
         {
             StatusText = "Offline";
             StatusColor = "#FF7B7B";
             ErrorMessage = ex.Message;
+            return false;
         }
     }
 
     private void NotifyTelemetry()
     {
-        foreach (var property in new[] { nameof(SolarPower), nameof(BatteryPercent), nameof(PvVoltageText), nameof(PvCurrentText), nameof(BatteryVoltageText), nameof(ChargeCurrentText), nameof(LastUpdateText) })
+        foreach (var property in new[] { nameof(SolarPower), nameof(BatteryPercent), nameof(SolarStatusText), nameof(BatteryStatusText), nameof(PvVoltageText), nameof(PvCurrentText), nameof(BatteryVoltageText), nameof(ChargeCurrentText), nameof(LastUpdateText) })
             OnPropertyChanged(property);
     }
 

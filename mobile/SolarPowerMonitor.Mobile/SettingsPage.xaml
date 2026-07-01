@@ -6,35 +6,54 @@
     <ScrollView>
         <VerticalStackLayout Padding="20,16,20,32" Spacing="18">
             <Label Text="Connection" FontSize="28" FontFamily="OpenSansSemibold" />
-            <Label Text="Use demo data, or connect directly to a controller bridge on your local network." TextColor="{StaticResource SecondaryText}" />
+            <Label Text="Choose SRNE cloud telemetry, a direct local bridge, or demo data." TextColor="{StaticResource SecondaryText}" />
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="16">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout>
-                            <Label Text="Demo mode" FontFamily="OpenSansSemibold" />
-                            <Label Text="Safe sample telemetry" TextColor="{StaticResource SecondaryText}" FontSize="13" />
-                        </VerticalStackLayout>
-                        <Switch x:Name="DemoSwitch" Grid.Column="1" OnColor="{StaticResource SolarAccent}" />
-                    </Grid>
+                    <Label Text="Data source" TextColor="{StaticResource SecondaryText}" />
+                    <Picker x:Name="SourcePicker" Title="Select data source" TextColor="White" TitleColor="#60738D" SelectedIndexChanged="OnSourceChanged">
+                        <Picker.Items>
+                            <x:String>SRNE Cloud</x:String>
+                            <x:String>Direct LAN</x:String>
+                            <x:String>Demo</x:String>
+                        </Picker.Items>
+                    </Picker>
+
                     <Label Text="Device name" TextColor="{StaticResource SecondaryText}" />
                     <Entry x:Name="DeviceNameEntry" Placeholder="SolarHub" TextColor="White" PlaceholderColor="#60738D" />
-                    <Label Text="Bridge host or IP" TextColor="{StaticResource SecondaryText}" />
-                    <Entry x:Name="HostEntry" Placeholder="192.168.x.x" Keyboard="Url" TextColor="White" PlaceholderColor="#60738D" />
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                        <VerticalStackLayout>
-                            <Label Text="Port" TextColor="{StaticResource SecondaryText}" />
-                            <Entry x:Name="PortEntry" Keyboard="Numeric" TextColor="White" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="1">
-                            <Label Text="Slave ID" TextColor="{StaticResource SecondaryText}" />
-                            <Entry x:Name="SlaveEntry" Keyboard="Numeric" TextColor="White" />
-                        </VerticalStackLayout>
-                    </Grid>
+
+                    <VerticalStackLayout x:Name="CloudSettings" Spacing="10">
+                        <Label Text="SRNE Wi-Fi device ID" TextColor="{StaticResource SecondaryText}" />
+                        <Entry x:Name="DeviceIdEntry" Placeholder="8 hexadecimal characters" IsPassword="True" MaxLength="8" TextColor="White" PlaceholderColor="#60738D" />
+                        <Label Text="Stored encrypted with Android Keystore. Cloud credentials are retained only in memory." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout x:Name="DirectSettings" Spacing="10" IsVisible="False">
+                        <Label Text="Bridge host or IP" TextColor="{StaticResource SecondaryText}" />
+                        <Entry x:Name="HostEntry" Placeholder="192.168.x.x" Keyboard="Url" TextColor="White" PlaceholderColor="#60738D" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                            <VerticalStackLayout>
+                                <Label Text="Port" TextColor="{StaticResource SecondaryText}" />
+                                <Entry x:Name="PortEntry" Keyboard="Numeric" TextColor="White" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="Slave ID" TextColor="{StaticResource SecondaryText}" />
+                                <Entry x:Name="SlaveEntry" Keyboard="Numeric" TextColor="White" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+
                     <Button Text="Save and reconnect" BackgroundColor="{StaticResource SolarAccent}" TextColor="#091727" FontFamily="OpenSansSemibold" CornerRadius="14" Clicked="OnSaveClicked" />
                 </VerticalStackLayout>
             </Border>
             <Label x:Name="ResultLabel" TextColor="{StaticResource BatteryAccent}" />
-            <Label Text="Security: this app stores no cloud password, MQTT credential, or real device ID." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+            <Border Style="{StaticResource Card}" Padding="16">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Automatic history" FontFamily="OpenSansSemibold" />
+                    <Label Text="SQLite stores every live reading. Android collects another reading approximately every 30 minutes while the app is closed." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                    <Label x:Name="StorageStatusLabel" Text="Checking local history…" TextColor="{StaticResource BatteryAccent}" FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+            <Label Text="No device identity or MQTT credential is compiled into this Android app." TextColor="{StaticResource SecondaryText}" FontSize="12" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

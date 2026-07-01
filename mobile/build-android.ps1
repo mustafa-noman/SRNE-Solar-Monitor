@@ -33,11 +33,24 @@ if (-not (Test-Path (Join-Path $androidSdk 'platforms'))) {
 }
 
 if ($Configuration -eq 'Release') {
+    $signingDirectory = Join-Path $env:USERPROFILE '.android\solar-monitor'
+    $keyStore = Join-Path $signingDirectory 'solar-monitor-release.keystore'
+    $passwordFile = Join-Path $signingDirectory 'signing-password.txt'
+    if (-not (Test-Path $keyStore) -or -not (Test-Path $passwordFile)) {
+        throw 'Production signing key is missing. Run .\mobile\initialize-signing.ps1 once, then back up its output.'
+    }
+    $env:SOLAR_MONITOR_SIGNING_PASSWORD = Get-Content -Raw -LiteralPath $passwordFile
+
     $arguments = @(
         'publish', $project, '-f', 'net10.0-android', '-c', 'Release',
         "-p:AndroidSdkDirectory=$androidSdk",
         "-p:JavaSdkDirectory=$jdk",
-        '-p:AndroidPackageFormats=apk'
+        '-p:AndroidPackageFormats=apk',
+        '-p:AndroidKeyStore=true',
+        "-p:AndroidSigningKeyStore=$keyStore",
+        '-p:AndroidSigningKeyAlias=solar-monitor-release',
+        '-p:AndroidSigningStorePass=env:SOLAR_MONITOR_SIGNING_PASSWORD',
+        '-p:AndroidSigningKeyPass=env:SOLAR_MONITOR_SIGNING_PASSWORD'
     )
 }
 else {
@@ -49,7 +62,9 @@ else {
 }
 
 & dotnet @arguments
+$buildExitCode = $LASTEXITCODE
+Remove-Item Env:SOLAR_MONITOR_SIGNING_PASSWORD -ErrorAction SilentlyContinue
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Android build failed with exit code $LASTEXITCODE."
+if ($buildExitCode -ne 0) {
+    throw "Android build failed with exit code $buildExitCode."
 }
