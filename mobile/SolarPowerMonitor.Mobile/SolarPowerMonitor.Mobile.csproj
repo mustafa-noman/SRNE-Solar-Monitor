@@ -36,7 +36,7 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
-		<SupportedOSPlatformVersion>35.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
