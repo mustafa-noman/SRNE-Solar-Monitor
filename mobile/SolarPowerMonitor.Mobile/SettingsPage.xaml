@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SolarPowerMonitor.Mobile.SettingsPage"
+             Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,32" Spacing="18">
+            <Label Text="Connection" FontSize="28" FontFamily="OpenSansSemibold" />
+            <Label Text="Use demo data, or connect directly to a controller bridge on your local network." TextColor="{StaticResource SecondaryText}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="Demo mode" FontFamily="OpenSansSemibold" />
+                            <Label Text="Safe sample telemetry" TextColor="{StaticResource SecondaryText}" FontSize="13" />
+                        </VerticalStackLayout>
+                        <Switch x:Name="DemoSwitch" Grid.Column="1" OnColor="{StaticResource SolarAccent}" />
+                    </Grid>
+                    <Label Text="Device name" TextColor="{StaticResource SecondaryText}" />
+                    <Entry x:Name="DeviceNameEntry" Placeholder="SolarHub" TextColor="White" PlaceholderColor="#60738D" />
+                    <Label Text="Bridge host or IP" TextColor="{StaticResource SecondaryText}" />
+                    <Entry x:Name="HostEntry" Placeholder="192.168.x.x" Keyboard="Url" TextColor="White" PlaceholderColor="#60738D" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                        <VerticalStackLayout>
+                            <Label Text="Port" TextColor="{StaticResource SecondaryText}" />
+                            <Entry x:Name="PortEntry" Keyboard="Numeric" TextColor="White" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Slave ID" TextColor="{StaticResource SecondaryText}" />
+                            <Entry x:Name="SlaveEntry" Keyboard="Numeric" TextColor="White" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Button Text="Save and reconnect" BackgroundColor="{StaticResource SolarAccent}" TextColor="#091727" FontFamily="OpenSansSemibold" CornerRadius="14" Clicked="OnSaveClicked" />
+                </VerticalStackLayout>
+            </Border>
+            <Label x:Name="ResultLabel" TextColor="{StaticResource BatteryAccent}" />
+            <Label Text="Security: this app stores no cloud password, MQTT credential, or real device ID." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

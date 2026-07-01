@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SolarPowerMonitor.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SolarPowerMonitor.Mobile"
+    Shell.BackgroundColor="#091727"
+    Shell.ForegroundColor="#F8FAFC"
+    Shell.TabBarBackgroundColor="#0B192B"
+    Shell.TabBarForegroundColor="#FFAF3F"
+    Shell.TabBarUnselectedColor="#8395AE"
+    Title="Solar Monitor">
+
+    <TabBar>
+        <ShellContent Title="Dashboard" ContentTemplate="{DataTemplate local:MainPage}" Route="dashboard" />
+        <ShellContent Title="History" ContentTemplate="{DataTemplate local:HistoryPage}" Route="history" />
+        <ShellContent Title="Settings" ContentTemplate="{DataTemplate local:SettingsPage}" Route="settings" />
+    </TabBar>
+
+</Shell>

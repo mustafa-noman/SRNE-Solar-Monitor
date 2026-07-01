@@ -1,0 +1,35 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SolarPowerMonitor.Mobile"
+             x:Class="SolarPowerMonitor.Mobile.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Color x:Key="PageBackground">#071321</Color>
+            <Color x:Key="CardBackground">#102238</Color>
+            <Color x:Key="CardBorder">#203B58</Color>
+            <Color x:Key="SolarAccent">#FFAF3F</Color>
+            <Color x:Key="BatteryAccent">#38D39F</Color>
+            <Color x:Key="PrimaryText">#F8FAFC</Color>
+            <Color x:Key="SecondaryText">#91A4BF</Color>
+            <Style TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="{StaticResource PageBackground}" />
+            </Style>
+            <Style x:Key="Card" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
+                <Setter Property="Stroke" Value="{StaticResource CardBorder}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 22" />
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource PrimaryText}" />
+                <Setter Property="FontFamily" Value="OpenSansRegular" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
