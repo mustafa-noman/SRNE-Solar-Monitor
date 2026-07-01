@@ -11,6 +11,8 @@
     <!-- This PC's Application Control policy blocks unsigned generated apphost executables.
          Launch the managed DLL through the signed dotnet host instead. -->
     <UseAppHost>false</UseAppHost>
+    <!-- Keep the nested Android MAUI project out of WPF default item globs. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);mobile\**</DefaultItemExcludes>
   </PropertyGroup>
 
 </Project>
