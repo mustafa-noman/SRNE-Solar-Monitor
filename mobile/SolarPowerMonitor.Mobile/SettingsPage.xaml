@@ -47,9 +47,21 @@
             </Border>
             <Label x:Name="ResultLabel" TextColor="{StaticResource BatteryAccent}" />
             <Border Style="{StaticResource Card}" Padding="16">
-                <VerticalStackLayout Spacing="5">
+                <VerticalStackLayout Spacing="12">
                     <Label Text="Automatic history" FontFamily="OpenSansSemibold" />
-                    <Label Text="SQLite stores every live reading. Android collects another reading approximately every 30 minutes while the app is closed." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="Background updates" />
+                            <Label Text="Collect data while the app is closed" TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Switch x:Name="BackgroundEnabledSwitch" Grid.Column="1" Toggled="OnBackgroundEnabledToggled" />
+                    </Grid>
+                    <VerticalStackLayout x:Name="BackgroundIntervalSettings" Spacing="5">
+                        <Label Text="Update interval (hours)" TextColor="{StaticResource SecondaryText}" />
+                        <Entry x:Name="BackgroundIntervalEntry" Keyboard="Numeric" MaxLength="3" TextColor="White" />
+                        <Label Text="Choose 1–168 hours. Android may delay background work to protect battery life." TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Label Text="SQLite stores every live reading and each successful background reading." TextColor="{StaticResource SecondaryText}" FontSize="12" />
                     <Label x:Name="StorageStatusLabel" Text="Checking local history…" TextColor="{StaticResource BatteryAccent}" FontSize="12" />
                 </VerticalStackLayout>
             </Border>

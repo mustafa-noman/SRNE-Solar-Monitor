@@ -12,7 +12,9 @@ public sealed record MonitorConfiguration(
     string DeviceName,
     string Host,
     int Port,
-    int SlaveId);
+    int SlaveId,
+    bool BackgroundEnabled,
+    int BackgroundIntervalHours);
 
 public static class MonitorSettings
 {
@@ -21,13 +23,15 @@ public static class MonitorSettings
     private static bool initialized;
 
     public static MonitorConfiguration Current { get; private set; } =
-        new(MonitorMode.Cloud, "SolarHub", "", 8899, 255);
+        new(MonitorMode.Cloud, "SolarHub", "", 8899, 255, true, 1);
 
     public static MonitorMode Mode => Current.Mode;
     public static string DeviceName => Current.DeviceName;
     public static string Host => Current.Host;
     public static int Port => Current.Port;
     public static int SlaveId => Current.SlaveId;
+    public static bool BackgroundEnabled => Current.BackgroundEnabled;
+    public static int BackgroundIntervalHours => Current.BackgroundIntervalHours;
 
     public static async Task InitializeAsync()
     {
@@ -46,7 +50,9 @@ public static class MonitorSettings
                     Preferences.Get("DeviceName", "SolarHub"),
                     Preferences.Get("Host", ""),
                     Preferences.Get("Port", 8899),
-                    Preferences.Get("SlaveId", 255));
+                    Preferences.Get("SlaveId", 255),
+                    true,
+                    1);
                 await SaveCoreAsync(Current);
             }
             else
@@ -56,7 +62,9 @@ public static class MonitorSettings
                     await SolarDatabase.GetSettingAsync("device_name") ?? "SolarHub",
                     await SolarDatabase.GetSettingAsync("host") ?? "",
                     ParseInt(await SolarDatabase.GetSettingAsync("port"), 8899),
-                    ParseInt(await SolarDatabase.GetSettingAsync("slave_id"), 255));
+                    ParseInt(await SolarDatabase.GetSettingAsync("slave_id"), 255),
+                    ParseBool(await SolarDatabase.GetSettingAsync("background_enabled"), true),
+                    Math.Clamp(ParseInt(await SolarDatabase.GetSettingAsync("background_interval_hours"), 1), 1, 168));
             }
             initialized = true;
         }
@@ -94,9 +102,14 @@ public static class MonitorSettings
             ["device_name"] = configuration.DeviceName,
             ["host"] = configuration.Host,
             ["port"] = configuration.Port.ToString(),
-            ["slave_id"] = configuration.SlaveId.ToString()
+            ["slave_id"] = configuration.SlaveId.ToString(),
+            ["background_enabled"] = configuration.BackgroundEnabled.ToString(),
+            ["background_interval_hours"] = configuration.BackgroundIntervalHours.ToString()
         });
 
     private static int ParseInt(string? value, int fallback) =>
         int.TryParse(value, out var parsed) ? parsed : fallback;
+
+    private static bool ParseBool(string? value, bool fallback) =>
+        bool.TryParse(value, out var parsed) ? parsed : fallback;
 }
