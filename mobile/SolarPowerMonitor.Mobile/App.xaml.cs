@@ -17,7 +17,7 @@ public partial class App : Application
 		window.Created += async (_, _) =>
 		{
 			await MonitorSettings.InitializeAsync();
-			TelemetryBackgroundScheduler.Schedule();
+			TelemetryBackgroundScheduler.ApplySettings();
 			await DashboardViewModel.Current.StartAsync();
 		};
 		window.Resumed += async (_, _) => await DashboardViewModel.Current.StartAsync();

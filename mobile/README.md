@@ -11,6 +11,8 @@
 - MQTT credentials retained only in process memory
 - Demo mode available for offline preview
 - Direct Modbus RTU-over-TCP connection to a controller bridge
+- SQLite persistence for settings and telemetry history
+- Optional Android background collection with a configurable 1–168 hour interval
 - No embedded device ID, MQTT username, password, or cloud credential lookup
 
 ## Android support
