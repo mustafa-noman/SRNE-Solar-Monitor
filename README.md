@@ -217,7 +217,7 @@ response frames.
 | --- | --- | --- |
 | `--widget` | Open the compact desktop widget | Disabled |
 | `--source` | Select `cloud` or `direct` mode | `cloud` |
-| `--device-id` | Eight-character SRNE Wi-Fi device ID | Project default |
+| `--device-id` | Eight-character SRNE Wi-Fi device ID | `SOLAR_DEVICE_ID` |
 | `--host` | Direct bridge IP address or hostname | `192.168.10.167` |
 | `--port` | Direct bridge TCP port | `8899` |
 | `--slave` | Modbus slave address | `255` |
