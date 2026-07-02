@@ -2,15 +2,16 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SolarPowerMonitor.Mobile.SettingsPage"
+             BackgroundColor="{StaticResource PageBackground}"
              Title="Settings">
     <ScrollView>
         <VerticalStackLayout Padding="20,16,20,32" Spacing="18">
-            <Label Text="Connection" FontSize="28" FontFamily="OpenSansSemibold" />
+            <Label Text="Connection" FontSize="28" FontFamily="OpenSansSemibold" SemanticProperties.HeadingLevel="Level1" />
             <Label Text="Choose SRNE cloud telemetry, a direct local bridge, or demo data." TextColor="{StaticResource SecondaryText}" />
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="16">
                     <Label Text="Data source" TextColor="{StaticResource SecondaryText}" />
-                    <Picker x:Name="SourcePicker" Title="Select data source" TextColor="White" TitleColor="#60738D" SelectedIndexChanged="OnSourceChanged">
+                    <Picker x:Name="SourcePicker" Title="Select data source" TextColor="{StaticResource PrimaryText}" TitleColor="{StaticResource SecondaryText}" SelectedIndexChanged="OnSourceChanged" SemanticProperties.Description="Telemetry data source">
                         <Picker.Items>
                             <x:String>SRNE Cloud</x:String>
                             <x:String>Direct LAN</x:String>
@@ -19,46 +20,46 @@
                     </Picker>
 
                     <Label Text="Device name" TextColor="{StaticResource SecondaryText}" />
-                    <Entry x:Name="DeviceNameEntry" Placeholder="SolarHub" TextColor="White" PlaceholderColor="#60738D" />
+                    <Entry x:Name="DeviceNameEntry" Placeholder="SolarHub" TextColor="{StaticResource PrimaryText}" PlaceholderColor="{StaticResource SecondaryText}" SemanticProperties.Description="Device display name" />
 
                     <VerticalStackLayout x:Name="CloudSettings" Spacing="10">
                         <Label Text="SRNE Wi-Fi device ID" TextColor="{StaticResource SecondaryText}" />
-                        <Entry x:Name="DeviceIdEntry" Placeholder="8 hexadecimal characters" IsPassword="True" MaxLength="8" TextColor="White" PlaceholderColor="#60738D" />
+                        <Entry x:Name="DeviceIdEntry" Placeholder="8 hexadecimal characters" IsPassword="True" MaxLength="8" TextColor="{StaticResource PrimaryText}" PlaceholderColor="{StaticResource SecondaryText}" />
                         <Label Text="Stored encrypted with Android Keystore. Cloud credentials are retained only in memory." TextColor="{StaticResource SecondaryText}" FontSize="12" />
                     </VerticalStackLayout>
 
                     <VerticalStackLayout x:Name="DirectSettings" Spacing="10" IsVisible="False">
                         <Label Text="Bridge host or IP" TextColor="{StaticResource SecondaryText}" />
-                        <Entry x:Name="HostEntry" Placeholder="192.168.x.x" Keyboard="Url" TextColor="White" PlaceholderColor="#60738D" />
+                        <Entry x:Name="HostEntry" Placeholder="192.168.x.x" Keyboard="Url" TextColor="{StaticResource PrimaryText}" PlaceholderColor="{StaticResource SecondaryText}" SemanticProperties.Description="Direct bridge host or IP address" />
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
                             <VerticalStackLayout>
                                 <Label Text="Port" TextColor="{StaticResource SecondaryText}" />
-                                <Entry x:Name="PortEntry" Keyboard="Numeric" TextColor="White" />
+                                <Entry x:Name="PortEntry" Keyboard="Numeric" TextColor="{StaticResource PrimaryText}" SemanticProperties.Description="Direct bridge TCP port" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1">
                                 <Label Text="Slave ID" TextColor="{StaticResource SecondaryText}" />
-                                <Entry x:Name="SlaveEntry" Keyboard="Numeric" TextColor="White" />
+                                <Entry x:Name="SlaveEntry" Keyboard="Numeric" TextColor="{StaticResource PrimaryText}" SemanticProperties.Description="Modbus slave ID" />
                             </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
 
-                    <Button Text="Save and reconnect" BackgroundColor="{StaticResource SolarAccent}" TextColor="#091727" FontFamily="OpenSansSemibold" CornerRadius="14" Clicked="OnSaveClicked" />
+                    <Button Text="Save and reconnect" BackgroundColor="{StaticResource SolarAccent}" TextColor="#091727" FontFamily="OpenSansSemibold" CornerRadius="14" Clicked="OnSaveClicked" SemanticProperties.Description="Save settings and reconnect telemetry" />
                 </VerticalStackLayout>
             </Border>
             <Label x:Name="ResultLabel" TextColor="{StaticResource BatteryAccent}" />
             <Border Style="{StaticResource Card}" Padding="16">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Automatic history" FontFamily="OpenSansSemibold" />
+                    <Label Text="Automatic history" FontFamily="OpenSansSemibold" SemanticProperties.HeadingLevel="Level2" />
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
                         <VerticalStackLayout Spacing="3">
                             <Label Text="Background updates" />
                             <Label Text="Collect data while the app is closed" TextColor="{StaticResource SecondaryText}" FontSize="12" />
                         </VerticalStackLayout>
-                        <Switch x:Name="BackgroundEnabledSwitch" Grid.Column="1" Toggled="OnBackgroundEnabledToggled" />
+                        <Switch x:Name="BackgroundEnabledSwitch" Grid.Column="1" OnColor="{StaticResource SolarAccent}" ThumbColor="{StaticResource PrimaryText}" Toggled="OnBackgroundEnabledToggled" SemanticProperties.Description="Enable background telemetry updates" />
                     </Grid>
                     <VerticalStackLayout x:Name="BackgroundIntervalSettings" Spacing="5">
                         <Label Text="Update interval (hours)" TextColor="{StaticResource SecondaryText}" />
-                        <Entry x:Name="BackgroundIntervalEntry" Keyboard="Numeric" MaxLength="3" TextColor="White" />
+                        <Entry x:Name="BackgroundIntervalEntry" Keyboard="Numeric" MaxLength="3" TextColor="{StaticResource PrimaryText}" SemanticProperties.Description="Background update interval in hours, from 1 to 168" />
                         <Label Text="Choose 1–168 hours. Android may delay background work to protect battery life." TextColor="{StaticResource SecondaryText}" FontSize="12" />
                     </VerticalStackLayout>
                     <Label Text="SQLite stores every live reading and each successful background reading." TextColor="{StaticResource SecondaryText}" FontSize="12" />

@@ -112,7 +112,7 @@ project.
 | Target API | API 36 |
 | Application ID | `com.mustafanoman.solarmonitor` |
 | Display version | `1.0` |
-| Android version code | `4` |
+| Android version code | `5` |
 
 ### Build the Android app
 

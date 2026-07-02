@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:SolarPowerMonitor.Mobile"
              x:Class="SolarPowerMonitor.Mobile.MainPage"
+             BackgroundColor="{StaticResource PageBackground}"
              Shell.NavBarIsVisible="False">
     <ScrollView>
         <VerticalStackLayout Padding="20,24,20,28" Spacing="18">
@@ -11,28 +12,28 @@
                     <Label Text="☀" TextColor="#091727" FontSize="35" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                 </Border>
                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                    <Label Text="Solar Monitor" FontSize="26" FontFamily="OpenSansSemibold" />
+                    <Label Text="Solar Monitor" FontSize="26" FontFamily="OpenSansSemibold" SemanticProperties.HeadingLevel="Level1" />
                     <Label Text="Home Solar" FontSize="15" TextColor="{StaticResource SecondaryText}" />
                     <HorizontalStackLayout Spacing="7">
                         <Label Text="●" TextColor="{Binding StatusColor}" FontSize="16" />
                         <Label Text="{Binding StatusText}" TextColor="{Binding StatusColor}" FontSize="16" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
-                <Button Grid.Column="2" Text="↻" FontSize="24" WidthRequest="56" HeightRequest="56" CornerRadius="18" BackgroundColor="#142942" TextColor="White" Command="{Binding RefreshCommand}" />
+                <Button Grid.Column="2" Text="↻" FontSize="24" WidthRequest="56" HeightRequest="56" CornerRadius="18" BackgroundColor="#142942" TextColor="White" Command="{Binding RefreshCommand}" SemanticProperties.Description="Refresh telemetry" />
             </Grid>
 
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="18">
-                    <Label Text="SOLAR GENERATION" TextColor="{StaticResource SolarAccent}" FontFamily="OpenSansSemibold" />
+                    <Label Text="SOLAR GENERATION" TextColor="{StaticResource SolarAccent}" FontFamily="OpenSansSemibold" SemanticProperties.HeadingLevel="Level2" />
                     <HorizontalStackLayout Spacing="6">
                         <Label Text="{Binding SolarPower}" FontSize="64" FontFamily="OpenSansSemibold" />
                         <Label Text="W" FontSize="29" TextColor="{StaticResource SecondaryText}" VerticalOptions="End" Margin="0,0,0,9" />
                     </HorizontalStackLayout>
                     <Label Text="{Binding SolarStatusText}" TextColor="{StaticResource SecondaryText}" FontSize="15" />
-                    <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
                         <Label Text="Recent solar output" FontFamily="OpenSansSemibold" />
-                        <Label Grid.Column="1" Text="Latest session readings" TextColor="{StaticResource SecondaryText}" FontSize="12" />
-                    </Grid>
+                        <Label Text="Latest session readings" TextColor="{StaticResource SecondaryText}" FontSize="12" />
+                    </VerticalStackLayout>
                     <local:HistoryGraphView HeightRequest="96" />
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="18">
                         <VerticalStackLayout>
@@ -51,7 +52,7 @@
                 <VerticalStackLayout Spacing="18">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Spacing="2">
-                            <Label Text="BATTERY" TextColor="{StaticResource BatteryAccent}" FontFamily="OpenSansSemibold" />
+                            <Label Text="BATTERY" TextColor="{StaticResource BatteryAccent}" FontFamily="OpenSansSemibold" SemanticProperties.HeadingLevel="Level2" />
                             <HorizontalStackLayout Spacing="4">
                                 <Label Text="{Binding BatteryPercent}" FontSize="52" FontFamily="OpenSansSemibold" TextColor="{StaticResource BatteryAccent}" />
                                 <Label Text="%" FontSize="25" TextColor="{StaticResource SecondaryText}" VerticalOptions="End" Margin="0,0,0,7" />
