@@ -68,6 +68,12 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
+        if (mode == MonitorMode.Direct && string.IsNullOrWhiteSpace(HostEntry.Text))
+        {
+            ShowError("Bridge host or IP is required for Direct LAN mode.");
+            return;
+        }
+
         var intervalIsValid = int.TryParse(BackgroundIntervalEntry.Text, out var backgroundIntervalHours) &&
             backgroundIntervalHours is >= 1 and <= 168;
         if (BackgroundEnabledSwitch.IsToggled && !intervalIsValid)

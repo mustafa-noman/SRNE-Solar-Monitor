@@ -6,8 +6,10 @@
     xmlns:local="clr-namespace:SolarPowerMonitor.Mobile"
     Shell.BackgroundColor="#091727"
     Shell.ForegroundColor="#F8FAFC"
+    Shell.TitleColor="#F8FAFC"
     Shell.TabBarBackgroundColor="#0B192B"
     Shell.TabBarForegroundColor="#FFAF3F"
+    Shell.TabBarTitleColor="#FFAF3F"
     Shell.TabBarUnselectedColor="#8395AE"
     Title="Solar Monitor">
 
